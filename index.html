@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxVibe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #ff2f92;
+      --text: #f7f7f9;
+      --muted: #9a9aaa;
+      --panel: rgba(15, 15, 22, .85);
+      --glow: 0 0 60px rgba(255, 47, 146, .8);
+      --popup-bg: rgba(20, 20, 30, .95);
+      --popup-success: #00ff9c;
+      --popup-fail: #ff4b5c;
+    }
+
+    /* OPSIONAL 2 — Smooth Scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, .65), rgba(0, 0, 0, .92)), var(--bg-image) center/cover no-repeat;
+      z-index: -3;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(0, 0, 0, .55);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+
+    .social {
+      display: flex;
+      gap: 18px;
+    }
+
+    .social a {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      border-radius: 50%;
+      font-size: 1.3rem;
+      transition: .4s;
+    }
+
+    .social a:hover {
+      transform: scale(1.3);
+      color: #fff;
+    }
+
+    .menu-btn {
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    .menu {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transform: translateY(-100%);
+      transition: .9s cubic-bezier(.77, 0, .18, 1);
+      z-index: 90;
+    }
+
+    .menu.active {
+      transform: translateY(0);
+    }
+
+    .menu a {
+      font-size: 2.4rem;
+      margin: 14px 0;
+      color: #fff;
+      text-decoration: none;
+      opacity: 0;
+      animation: menuIn .7s forwards;
+    }
+
+    @keyframes menuIn {
+      to {
+        opacity: 1
+      }
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      line-height: 1.05;
+    }
+
+    /* OPSIONAL 3 — Glow Hero Title */
+    .hero h1 {
+      text-shadow:
+        0 0 40px rgba(255, 47, 146, .6),
+        0 0 80px rgba(0, 255, 247, .25);
+    }
+
+    .hero h1 span span {
+      color: var(--accent);
+    }
+
+    .hero p {
+      margin-top: 16px;
+      color: var(--muted);
+    }
+
+    .section {
+      margin: 120px 0;
+      position: relative;
+    }
+
+    h2 {
+      padding: 0 20px;
+      margin-bottom: 16px;
+    }
+
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carousel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 0 20px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel .card {
+      scroll-snap-align: start;
+    }
+
+    .dots {
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin: 0 4px;
+      background: var(--muted);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background .3s;
+    }
+
+    .dot.active {
+      background: var(--accent);
+    }
+
+    .card {
+      min-width: 280px;
+      aspect-ratio: 4/3;
+      background: var(--panel);
+      border-radius: 22px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: .5s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    /* OPSIONAL 1 — Overlay hover ala Vindes */
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card img,
+    .card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card .label {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, .9));
+      font-size: 0.9rem;
+      z-index: 3;
+    }
+
+    .card .label a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .card .edit-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--accent);
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: none;
+      z-index: 3;
+    }
+
+    .card .delete-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: red;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: none;
+      z-index: 3;
+    }
+
+    #logoutBtn {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      padding: 10px 16px;
+      background: #fff;
+      color: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: none;
+      z-index: 100;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    #detail {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .95);
+      display: none;
+      z-index: 300;
+      overflow-y: auto;
+      padding-top: 40px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    #detail .close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+      z-index: 400;
+    }
+
+    #detail .media-container {
+      max-width: 50%;
+      margin: 20px;
+      text-align: center;
+    }
+
+    #detail .media-container img,
+    #detail .media-container video {
+      max-width: 100%;
+      border-radius: 16px;
+    }
+
+    #detail .content {
+      max-width: 40%;
+      margin: 20px;
+      text-align: left;
+      color: #fff;
+      word-break: break-word;
+    }
+
+    #detail .content h1 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    #detail .content a {
+      color: #00fff7;
+      text-decoration: underline;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 30, .95);
+      padding: 30px;
+      border-radius: 20px;
+      min-width: 300px;
+      text-align: center;
+      z-index: 500;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 47, 146, .5);
+    }
+
+    .popup h2 {
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .popup input,
+    .popup select,
+    .popup textarea {
+      width: 80%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    .popup button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .popup button:hover {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .popup .closePopup {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .popup.success {
+      border: 2px solid #00ff9c;
+    }
+
+    .popup.fail {
+      border: 2px solid #ff4b5c;
+    }
+
+    /* Art & News Card Background ala Cyberpunk Vindes */
+    .section.art .card,
+    .section.news .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+    }
+
+    .section.art .card:hover,
+    .section.news .card:hover {
+      transform: scale(1.07) translateY(-4px);
+      box-shadow: 0 0 30px rgba(255, 47, 146, .6), 0 0 40px rgba(0, 255, 247, .3);
+    }
+
+    @keyframes gradientAnim {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* ===============================
+   BACKGROUND GEDE ART & BERITA
+   DARI JUDUL SAMPAI DOT
+================================ */
+
+    .section.art,
+    .section.news {
+      position: relative;
+      padding: 60px 0;
+    }
+
+    /* background gede */
+    .section.art::before,
+    .section.news::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+
+      background:
+        linear-gradient(rgba(0, 0, 0, .55),
+          rgba(0, 0, 0, .9)),
+        url(bgweb-art-1.png) center/cover no-repeat;
+
+      filter: contrast(1.15) saturate(1.25);
+    }
+
+    /* pastikan semua isi di atas background */
+    .section.art>*,
+    .section.news>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* optional: glow biar makin hidup */
+    .section.art .card:hover,
+    .section.news .card:hover {
+      box-shadow:
+        0 0 30px rgba(255, 47, 146, .6),
+        0 0 50px rgba(0, 255, 247, .35);
+    }
+
+    /* ===============================
+   BACKGROUND FOOTER
+   ABSTRAK + FOTO BISA DIGANTI
+================================ */
+
+    footer {
+      position: relative;
+      padding: 60px 20px;
+      overflow: hidden;
+      color: #f7f7f9;
+    }
+
+    /* layer foto (bisa kamu ganti sendiri) */
+    footer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+
+      /* GANTI FOTO KAMU DI SINI */
+      background:
+        linear-gradient(rgba(0, 0, 0, .6),
+          rgba(0, 0, 0, .9)),
+        url(bgfooter.jpg) center/cover no-repeat;
+
+      filter: saturate(1.1) contrast(1.05);
+    }
+
+    /* pastikan teks di atas background */
+    footer * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===============================
+   JUDUL KATEGORI
+   POPPINS • UPPERCASE • TEBAL
+   OUTLINE TERASA + LENGKUNG HALUS
+================================ */
+
+    .section h2 {
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 2.15rem;
+      letter-spacing: 1.4px;
+      line-height: 1.1;
+      color: #ffffff;
+
+      /* outline lebih terasa */
+      -webkit-text-stroke: 2.3px #000;
+      text-stroke: 1.3px #000;
+
+      /* efek lengkung halus (bukan alay) */
+      transform: perspective(600px) rotateX(8deg);
+      transform-origin: left center;
+
+      /* rendering */
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ===============================
+   BACKGROUND HALAMAN UTAMA (HERO)
+   FOTO BISA DIGANTI SENDIRI
+================================ */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    /* layer background foto */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+
+      /* 🔥 GANTI FOTO KAMU DI SINI */
+      background:
+        linear-gradient(rgba(0, 0, 0, .55),
+          rgba(0, 0, 0, .85)),
+        url(bg-saya.jpg) center/cover no-repeat;
+
+      filter: contrast(1.1) saturate(1.2);
+    }
+
+    /* layer efek abstrak biar ga polos */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255, 47, 146, .25), transparent 40%);
+
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    /* pastikan konten di atas background */
+    .hero>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===============================
+   CARD STYLE BARU (SESUAI FOTO)
+================================ */
+
+    /* MATIKAN EFEK LAMA */
+    .card::before,
+    .card::after {
+      display: none !important;
+    }
+
+    /* KOTAK KARTU */
+    .card {
+      min-width: 240px;
+      height: 340px;
+      /* 🔥 portrait */
+      background: transparent;
+      border-radius: 0 !important;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+      transform: none !important;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* HOVER HALUS */
+    .card:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    }
+
+    /* GAMBAR / VIDEO DI ATAS */
+    .card img,
+    .card video {
+      width: 100%;
+      height: 240px;
+      /* 🔥 dominan seperti foto */
+      object-fit: cover;
+      display: block;
+      border-radius: 0 !important;
+    }
+
+    /* AREA BAWAH GAMBAR */
+    .card .label {
+      position: static;
+      background: none;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* JUDUL */
+    .card .label a {
+      color: #fff;
+      font-size: 1.05rem;
+      /* 🔥 lebih gede */
+      font-weight: 600;
+      text-decoration: none;
+      line-height: 1.25;
+
+      /* 🔥 2 baris */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      overflow: hidden;
+      max-width: 100%;
+    }
+
+    .card,
+    .card *,
+    .card::before,
+    .card::after {
+      border-radius: 0 !important;
+    }
+
+    #uploadBtn {
+      position: fixed;
+      bottom: 20px;
+      /* di bawah tombol logout */
+      right: 20px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: none;
+      /* default sembunyi, muncul saat admin login */
+      z-index: 100;
+    }
+
+    #uploadBtn:hover {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    /* FORM */
+    .upload-form label {
+      margin-top: 12px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .upload-form input,
+    .upload-form textarea,
+    .upload-form select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 4px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      background: rgba(0, 0, 0, .35);
+      color: #fff;
+      font-size: .95rem;
+    }
+
+    .upload-form input:focus,
+    .upload-form textarea:focus,
+    .upload-form select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(255, 47, 146, .4);
+    }
+
+    .upload-form textarea {
+      min-height: 90px;
+    }
+
+    /* BUTTON */
+    .upload-form button {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    /* PREVIEW */
+    .upload-preview-box {
+      background: rgba(0, 0, 0, .45);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      border: 1px dashed rgba(255, 255, 255, .2);
+    }
+
+    .upload-preview-box h3 {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    #uploadPreview {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    #uploadPreview img,
+    #uploadPreview video {
+      max-width: 100%;
+      max-height: 260px;
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, .6);
+    }
+
+    /* ===============================
+UPLOAD INLINE PREVIEW
+================================ */
+
+    .upload-popup {
+      width: 92%;
+      max-width: 520px;
+      background:
+        linear-gradient(160deg, rgba(255, 47, 146, .18), rgba(0, 0, 0, .95)),
+        rgba(15, 15, 25, .95);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 47, 146, .35);
+      box-shadow: 0 0 35px rgba(255, 47, 146, .35);
+    }
+
+    .upload-popup h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+
+    .inline-preview {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, .45);
+      border: 1px dashed rgba(255, 255, 255, .25);
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .inline-preview img,
+    .inline-preview video {
+      max-width: 100%;
+      max-height: 240px;
+      border-radius: 12px;
+      margin-top: 10px;
+      box-shadow: 0 0 22px rgba(0, 0, 0, .6);
+    }
+
+    .inline-preview video {
+      outline: none;
+    }
+
+    /* ===============================
+FIX SELECT KATEGORI (TEKS TIDAK TERLIHAT)
+================================ */
+
+    /* select utama */
+    #uploadPopup select {
+      background: rgba(0, 0, 0, .65) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, .25);
+    }
+
+    /* option di dalam dropdown */
+    #uploadPopup select option {
+      background: #111 !important;
+      color: #ffffff !important;
+    }
+
+    /* saat focus */
+    #uploadPopup select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(255, 47, 146, .45);
+    }
+
+    /* placeholder text effect (beberapa browser) */
+    #uploadPopup select option:disabled {
+      color: #aaa;
+    }
+
+    .card iframe,
+    #detail iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ===============================
+DETAIL VIEW – STYLE BERITA
+================================ */
+
+    .detail-meta {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .detail-author {
+      font-size: .9rem;
+      color: #ccc;
+      margin-bottom: 18px;
+    }
+
+    #detailDesc {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: #f1f1f1;
+    }
+
+    #detail .close {
+      z-index: 999;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <header>
+    <div class="logo">VOXVIBE</div>
+    <div class="social" id="socialLinks"></div>
+    <div class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+  </header>
+
+  <nav class="menu" id="menu">
+    <a href="#video" onclick="toggleMenu()">Video Series</a>
+    <a href="#creator" onclick="toggleMenu()">Art / Kreator</a>
+    <a href="#store" onclick="toggleMenu()">Store</a>
+    <a href="#news" onclick="toggleMenu()">Berita</a>
+    <a href="#" onclick="openLoginPopup()">Admin</a>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h1>Culture.<br><span><span>Entertainment.</span></span><br>Community.</h1>
+      <p>Media, karya, dan suara generasi sekarang.</p>
+    </div>
+  </section>
+
+  <section class="section" id="video">
+    <h2>Video Series</h2>
+    <div class="carousel-container">
+      <div class="carousel" id="videoList"></div>
+      <div class="dots" id="videoDots"></div>
+    </div>
+  </section>
+
+  <section class="section art" id="creator">
+    <h2>Art / Kreator</h2>
+    <div class="carousel-container">
+      <div class="carousel" id="creatorList"></div>
+      <div class="dots" id="creatorDots"></div>
+    </div>
+  </section>
+
+  <section class="section" id="store">
+    <h2>Store</h2>
+    <div class="carousel-container">
+      <div class="carousel" id="storeList"></div>
+      <div class="dots" id="storeDots"></div>
+    </div>
+  </section>
+
+  <section class="section news" id="news">
+    <h2>Berita</h2>
+    <div class="carousel-container">
+      <div class="carousel" id="newsList"></div>
+      <div class="dots" id="newsDots"></div>
+    </div>
+  </section>
+
+  <button id="logoutBtn" onclick="logoutAdminPopup()">Logout Admin</button>
+  <button id="uploadBtn" onclick="openUploadPopup()">Upload Konten</button>
+
+  <footer>© 2026 VoxVibe</footer>
+
+  <div id="detail" onclick="closeDetail()">
+    <div class="close" onclick="event.stopPropagation(); closeDetail()">✕</div>
+
+    <!-- MEDIA UTAMA -->
+    <div class="media-container" id="detailMediaContainer"></div>
+
+    <!-- KONTEN ARTIKEL -->
+    <div class="content" id="detailText" onclick="event.stopPropagation()">
+
+      <!-- META INFO -->
+      <div class="detail-meta">
+        <span id="detailCategory"></span>
+        <span>•</span>
+        <span id="detailDate"></span>
+      </div>
+
+      <!-- JUDUL -->
+      <h1 id="detailTitle"></h1>
+
+      <!-- PENULIS -->
+      <div class="detail-author">
+        Ditulis oleh <strong id="detailAuthor"></strong>
+      </div>
+
+      <!-- DESKRIPSI / ISI ARTIKEL -->
+      <p id="detailDesc"></p>
+
+      <!-- LINK MARKET / CTA -->
+      <a id="detailLink" href="#" target="_blank" style="display:none;">
+        Kunjungi Marketplace →
+      </a>
+
+    </div>
+  </div>
+
+  <div id="loginPopup" class="popup">
+    <div class="closePopup" onclick="closeLoginPopup()">✕</div>
+    <h2>Login Admin</h2>
+    <input type="text" id="adminUsername" placeholder="Username"><br>
+    <input type="password" id="adminPassword" placeholder="Password"><br>
+    <button onclick="loginAdmin()">Login</button>
+  </div>
+
+  <div id="feedbackPopup" class="popup"></div>
+  <div id="uploadPopup" class="popup upload-popup">
+    <div class="closePopup" onclick="closeUploadPopup()">✕</div>
+
+    <h2 id="uploadTitlePopup">Upload Konten</h2>
+
+    <label>Kategori</label>
+    <select id="uploadCategory" onchange="checkStoreLink()">
+      <option value="video">Video Series</option>
+      <option value="creator">Art / Kreator</option>
+      <option value="store">Store</option>
+      <option value="news">Berita</option>
+    </select>
+
+    <label>Judul</label>
+    <input type="text" id="uploadTitle" placeholder="Judul konten">
+
+    <label>Deskripsi</label>
+    <textarea id="uploadDesc" placeholder="Deskripsi konten"></textarea>
+
+    <label>Penulis</label>
+    <input type="text" id="uploadAuthor" placeholder="Nama penulis">
+
+    <div id="storeLinkContainer">
+      <label>Link Marketplace</label>
+      <input type="text" id="uploadLink" placeholder="https://...">
+    </div>
+
+    <label>Media (Upload File)</label>
+    <input type="file" id="uploadFile" accept="image/*,video/*" onchange="handleFileSelect(event)">
+
+    <label>Atau URL Media</label>
+    <input type="text" id="uploadSrc" placeholder="https://..." oninput="updatePreview()">
+
+    <!-- PREVIEW LANGSUNG DI BAWAH -->
+    <div id="uploadPreview" class="inline-preview">
+      Media akan muncul di sini
+    </div>
+
+    <button onclick="saveContent()">Simpan Konten</button>
+  </div>
+
+  <style>
+    #uploadPopup label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    #uploadPopup input,
+    #uploadPopup select,
+    #uploadPopup textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    #uploadPopup textarea {
+      resize: vertical;
+      min-height: 80px;
+      max-height: 150px;
+    }
+
+    #uploadPopup button {
+      margin-top: 14px;
+      padding: 12px 20px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    #uploadPopup button:hover {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    #uploadPreview img,
+    #uploadPreview video {
+      max-width: 100%;
+      max-height: 240px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    #storeLinkContainer {
+      display: none;
+    }
+
+    /* ===============================
+DETAIL VIEW — STYLE ARTIKEL
+================================ */
+    #detail {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 15, 0.97);
+      display: none;
+      z-index: 300;
+      overflow-y: auto;
+      padding: 40px 20px;
+      justify-content: center;
+      align-items: flex-start;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    #detail .close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--accent);
+      z-index: 400;
+      transition: transform 0.3s;
+    }
+
+    #detail .close:hover {
+      transform: rotate(90deg);
+    }
+
+    #detail .media-container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto 30px auto;
+      text-align: center;
+    }
+
+    #detail .media-container img,
+    #detail .media-container video,
+    #detail .media-container iframe {
+      width: 100%;
+      max-height: 500px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    #detail .content {
+      max-width: 900px;
+      margin: 0 auto 50px auto;
+      color: #f1f1f1;
+      line-height: 1.75;
+    }
+
+    #detail .content h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--accent);
+      text-transform: capitalize;
+    }
+
+    #detail .detail-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    #detail .detail-author {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 18px;
+    }
+
+    #detail #detailDesc {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      margin-bottom: 20px;
+    }
+
+    #detail #detailLink {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    #detail #detailLink:hover {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    /* ===============================
+DETAIL VIEW — RESPONSIVE MEDIA
+================================ */
+    #detail {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 15, 0.97);
+      display: none;
+      z-index: 300;
+      overflow-y: auto;
+      padding: 40px 20px;
+      justify-content: center;
+      align-items: flex-start;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* CLOSE BUTTON */
+    #detail .close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--accent);
+      z-index: 400;
+      transition: transform 0.3s;
+    }
+
+    #detail .close:hover {
+      transform: rotate(90deg);
+    }
+
+    /* MEDIA UTAMA */
+    #detail .media-container {
+      width: 100%;
+      max-width: 900px;
+      /* batas maksimal di desktop */
+      margin: 0 auto 30px auto;
+      text-align: center;
+    }
+
+    #detail .media-container img,
+    #detail .media-container video,
+    #detail .media-container iframe {
+      width: 100%;
+      height: auto;
+      /* otomatis menyesuaikan proporsi */
+      max-height: 500px;
+      /* untuk desktop */
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    /* KONTEN TEKS */
+    #detail .content {
+      max-width: 900px;
+      margin: 0 auto 50px auto;
+      color: #f1f1f1;
+      line-height: 1.75;
+      padding: 0 10px;
+    }
+
+    #detail .content h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--accent);
+      text-transform: capitalize;
+    }
+
+    #detail .detail-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    #detail .detail-author {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 18px;
+    }
+
+    #detail #detailDesc {
+      font-size: 1.05rem;
+      color: #e0e0e0;
+      margin-bottom: 20px;
+    }
+
+    #detail #detailLink {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    #detail #detailLink:hover {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    /* ===============================
+RESPONSIVE — MOBILE / TABLET
+================================ */
+    @media (max-width: 768px) {
+
+      #detail .media-container img,
+      #detail .media-container video,
+      #detail .media-container iframe {
+        max-height: 300px;
+        /* lebih kecil untuk layar kecil */
+      }
+
+      #detail .content h1 {
+        font-size: 1.8rem;
+      }
+
+      #detail #detailDesc {
+        font-size: 1rem;
+      }
+
+      #detail #detailLink {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      #detail .media-container img,
+      #detail .media-container video,
+      #detail .media-container iframe {
+        max-height: 220px;
+      }
+
+      #detail .content h1 {
+        font-size: 1.5rem;
+      }
+
+      #detail #detailDesc {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* MEDIA UTAMA DETAIL VIEW — FULL FIT, NO CROP */
+    #detail .media-container img,
+    #detail .media-container video,
+    #detail .media-container iframe {
+      width: 100%;
+      height: auto;
+      /* tinggi otomatis menyesuaikan lebar */
+      max-height: 90vh;
+      /* maksimal 90% dari tinggi viewport */
+      border-radius: 12px;
+      object-fit: contain;
+      /* tetap proporsional, tidak ter-crop */
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    /* RESPONSIVE MOBILE / TABLET */
+    @media (max-width: 768px) {
+
+      #detail .media-container img,
+      #detail .media-container video,
+      #detail .media-container iframe {
+        max-height: 60vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      #detail .media-container img,
+      #detail .media-container video,
+      #detail .media-container iframe {
+        max-height: 50vh;
+      }
+    }
+    .upload-popup {
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh; /* tinggi maksimal popup */
+  overflow-y: auto;  /* scroll otomatis jika isi terlalu tinggi */
+  padding: 20px;
+  background:
+    linear-gradient(160deg, rgba(255, 47, 146, .18), rgba(0, 0, 0, .95)),
+    rgba(15, 15, 25, .95);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 47, 146, .35);
+  box-shadow: 0 0 35px rgba(255, 47, 146, .35);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+/* Preview media */
+.inline-preview {
+  max-height: 240px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* media di preview */
+.inline-preview img,
+.inline-preview video {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+/* Responsive HP */
+@media (max-width: 480px) {
+  .upload-popup {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .upload-popup h2 {
+    font-size: 1.3rem;
+  }
+
+  #uploadPreview img,
+  #uploadPreview video {
+    max-height: 150px;
+  }
+}
+
+  </style>
+
+  <script>
+    // preview langsung di bawah form
+    function updatePreview() {
+      const inputSrc = document.getElementById("uploadSrc").value.trim();
+      const container = document.getElementById("uploadPreview");
+      container.innerHTML = '';
+      container.dataset.src = '';
+      container.dataset.type = '';
+      container.dataset.embed = '';
+
+      if (!inputSrc) {
+        container.innerText = 'Media akan muncul di sini';
+        return;
+      }
+
+      let el, finalSrc = inputSrc;
+      let type = 'image';
+      let embed = false;
+
+      // VIDEO FILE
+      if (inputSrc.match(/\.(mp4|webm|ogg|m3u8)$/i)) {
+        el = document.createElement('video');
+        el.src = inputSrc;
+        el.controls = true;
+        type = 'video';
+
+        // YOUTUBE
+      } else if (inputSrc.includes('youtube.com') || inputSrc.includes('youtu.be')) {
+        const videoId = inputSrc.includes('youtu.be')
+          ? inputSrc.split('/').pop()
+          : new URL(inputSrc).searchParams.get('v');
+
+        finalSrc = `https://www.youtube.com/embed/${videoId}`;
+        el = document.createElement('iframe');
+        el.src = finalSrc;
+        embed = true;
+        type = 'video';
+
+        // TIKTOK
+      } else if (inputSrc.includes('tiktok.com')) {
+        const match = inputSrc.match(/video\/(\d+)/);
+        if (match) {
+          finalSrc = `https://www.tiktok.com/embed/v2/${match[1]}`;
+          el = document.createElement('iframe');
+          el.src = finalSrc;
+          embed = true;
+          type = 'video';
+        }
+
+        // INSTAGRAM
+      } else if (inputSrc.includes('instagram.com')) {
+        finalSrc = inputSrc.endsWith('/')
+          ? inputSrc + 'embed'
+          : inputSrc + '/embed';
+
+        el = document.createElement('iframe');
+        el.src = finalSrc;
+        embed = true;
+        type = 'video';
+
+        // IMAGE
+      } else {
+        el = document.createElement('img');
+        el.src = inputSrc;
+      }
+
+      el.allow = "autoplay; encrypted-media";
+      el.allowFullscreen = true;
+
+      container.appendChild(el);
+
+      // 🔥 SIMPAN EMBED URL (BUKAN URL ASLI)
+      container.dataset.src = finalSrc;
+      container.dataset.type = type;
+      container.dataset.embed = embed ? "true" : "false";
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      const container = document.getElementById("uploadPreview");
+      container.innerHTML = '';
+      if (!file) return;
+
+      const isVideo = file.type.startsWith('video');
+      const media = document.createElement(isVideo ? 'video' : 'img');
+      media.src = URL.createObjectURL(file);
+      if (isVideo) media.controls = true;
+
+      container.appendChild(media);
+
+      // simpan type & src sementara di dataset
+      container.dataset.type = isVideo ? 'video' : 'image';
+      container.dataset.src = media.src;
+    }
+  </script>
+
+  <script>
+    // Social links
+    const socialMedia = [
+      { icon: 'fab fa-instagram', url: 'https://instagram.com/voxvibe.id' },
+      { icon: 'fab fa-tiktok', url: 'https://tiktok.com/@voxvibe.id' },
+      { icon: 'fab fa-youtube', url: 'https://youtube.com/@sorélaentertainment' }
+    ];
+    const socialContainer = document.getElementById("socialLinks");
+    socialMedia.forEach(s => {
+      const a = document.createElement('a');
+      a.href = s.url;
+      a.target = "_blank";
+      a.innerHTML = `<i class="${s.icon}"></i>`;
+      socialContainer.appendChild(a);
+    });
+
+    // Data
+    let data = JSON.parse(localStorage.getItem('voxvibeData')) || { video: [], creator: [], store: [], news: [] };
+    let editIndex = null, editCategory = null;
+    const logoutBtn = document.getElementById("logoutBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+
+    // Feedback popup
+    function showFeedback(msg, type) {
+      const fb = document.getElementById("feedbackPopup");
+      fb.innerText = msg;
+      fb.className = `popup ${type}`;
+      fb.style.display = 'block';
+      setTimeout(() => { fb.style.display = 'none'; }, 2200);
+    }
+
+    // Login popup
+    function openLoginPopup() { document.getElementById("loginPopup").style.display = 'block'; }
+    function closeLoginPopup() { document.getElementById("loginPopup").style.display = 'none'; }
+
+    function loginAdmin() {
+      const u = document.getElementById("adminUsername").value;
+      const p = document.getElementById("adminPassword").value;
+      if (u === "voxvibe" && p === "sorela2025") {
+        localStorage.setItem("admin", "true");
+        logoutBtn.style.display = "block";
+        uploadBtn.style.display = 'block';
+        closeLoginPopup();
+        renderWithDots();
+        showFeedback("Login berhasil!", "success");
+      } else showFeedback("Username/Password salah!", "fail");
+    }
+
+    function logoutAdminPopup() {
+      localStorage.removeItem("admin");
+      uploadBtn.style.display = 'none';
+      logoutBtn.style.display = 'none';
+      renderWithDots();
+      showFeedback("Logout berhasil!", "success");
+    }
+
+    // Render carousel + dots
+    function renderWithDots() {
+      ['video', 'creator', 'store', 'news'].forEach(cat => {
+        const carousel = document.getElementById(cat + 'List');
+        const dotsContainer = document.getElementById(cat + 'Dots');
+
+        carousel.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        data[cat].forEach((item, i) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+
+          let media;
+          if (item.type === 'video' && item.embed) {
+            media = document.createElement('iframe');
+            media.src = item.src;
+            media.allow = "autoplay; encrypted-media";
+            media.allowFullscreen = true;
+          } else {
+            media = document.createElement(item.type === 'image' ? 'img' : 'video');
+            media.src = item.src;
+            if (item.type === 'video') media.controls = true;
+          }
+
+          card.appendChild(media);
+
+          const label = document.createElement('div');
+          label.className = 'label';
+          const titleEl = document.createElement('a');
+          titleEl.innerText = item.title;
+          titleEl.href = "javascript:void(0)";
+          label.appendChild(titleEl);
+          card.appendChild(label);
+
+          if (localStorage.getItem('admin')) {
+            const edit = document.createElement('div');
+            edit.className = 'edit-btn';
+            edit.innerText = 'Edit';
+            edit.onclick = e => { e.stopPropagation(); editContent(cat, i); };
+
+            const del = document.createElement('div');
+            del.className = 'delete-btn';
+            del.innerText = 'Hapus';
+            del.onclick = e => { e.stopPropagation(); deleteContent(cat, i); };
+
+            edit.style.display = del.style.display = 'block';
+            card.appendChild(edit);
+            card.appendChild(del);
+          }
+
+          card.onclick = () => openDetail(item);
+          carousel.appendChild(card);
+
+          const dot = document.createElement('span');
+          dot.className = 'dot';
+          if (i === 0) dot.classList.add('active');
+          dot.onclick = () => {
+            const w = carousel.querySelector('.card')?.offsetWidth || 300;
+            carousel.scrollTo({ left: i * (w + 20), behavior: 'smooth' });
+          };
+          dotsContainer.appendChild(dot);
+        });
+
+        // 🔥 SCROLL EVENT DIPASANG SEKALI (BENAR)
+        carousel.addEventListener('scroll', () => {
+          const scrollLeft = carousel.scrollLeft;
+          const cardWidth = carousel.querySelector('.card')?.offsetWidth || 300;
+          const index = Math.floor((scrollLeft + cardWidth / 2) / (cardWidth + 20));
+          const dots = dotsContainer.querySelectorAll('.dot');
+          dots.forEach((d, j) => d.classList.toggle('active', j === index));
+        });
+      });
+    }
+    // Save / Add / Edit content
+    function saveContent() {
+      const cat = document.getElementById("uploadCategory").value;
+      const title = document.getElementById("uploadTitle").value.trim();
+      const desc = document.getElementById("uploadDesc").value.trim();
+      const author = document.getElementById("uploadAuthor").value.trim();
+      const link = document.getElementById("uploadLink").value.trim();
+      const preview = document.getElementById("uploadPreview");
+
+      const src = preview.dataset.src || document.getElementById("uploadSrc").value.trim();
+      const type = preview.dataset.type || 'image';
+      const embed = preview.dataset.embed === "true";
+
+      if (!title || !src) { showFeedback("Judul dan URL media wajib diisi!", "fail"); return; }
+
+      const newItem = {
+        title,
+        desc,
+        author,
+        link,
+        type,
+        src,
+        embed,
+        category: cat,
+        date: new Date().toISOString()
+      };
+
+      if (editIndex !== null && editCategory !== null) {
+        data[editCategory][editIndex] = newItem;
+        showFeedback("Konten berhasil diedit!", "success");
+      } else {
+        data[cat].push(newItem);
+        showFeedback("Konten berhasil diupload!", "success");
+      }
+
+      localStorage.setItem('voxvibeData', JSON.stringify(data));
+      renderWithDots();
+      closeUploadPopup();
+    }
+
+    // Edit / Delete
+    function editContent(cat, i) {
+      const item = data[cat][i];
+      editIndex = i; editCategory = cat;
+      openUploadPopup();
+      document.getElementById("uploadCategory").value = cat;
+      document.getElementById("uploadTitle").value = item.title;
+      document.getElementById("uploadDesc").value = item.desc;
+      document.getElementById("uploadAuthor").value = item.author;
+      document.getElementById("uploadLink").value = item.link;
+      document.getElementById("uploadSrc").value = item.src;
+      document.getElementById("uploadCategory").disabled = true;
+      updatePreview();
+      document.getElementById("uploadTitlePopup").innerText = "Edit Konten";
+    }
+    function deleteContent(cat, i) {
+      if (confirm("Hapus konten ini?")) {
+        data[cat].splice(i, 1);
+        localStorage.setItem('voxvibeData', JSON.stringify(data));
+        renderWithDots();
+        showFeedback("Konten terhapus!", "success");
+      }
+    }
+
+    // Detail view
+    function openDetail(item) {
+      document.getElementById('detailTitle').innerText = item.title;
+      document.getElementById('detailDesc').innerText = item.desc;
+
+      // ✅ KATEGORI (fallback aman)
+      document.getElementById('detailCategory').innerText =
+        item.category || 'Berita';
+
+      // ✅ TANGGAL (SUDAH VALID)
+      document.getElementById('detailDate').innerText =
+        item.date
+          ? new Date(item.date).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })
+          : '';
+
+      // ✅ PENULIS (INI YANG KAMU MAU)
+      document.getElementById('detailAuthor').innerText =
+        item.author && item.author.trim()
+          ? item.author
+          : 'Redaksi VoxVibe';
+
+      const container = document.getElementById('detailMediaContainer');
+      container.innerHTML = '';
+      let media;
+
+      if (item.type === 'video' && item.embed) {
+        media = document.createElement('iframe');
+        media.src = item.src;
+        media.allow = "autoplay; encrypted-media";
+        media.allowFullscreen = true;
+      } else {
+        media = document.createElement(item.type === 'image' ? 'img' : 'video');
+        media.src = item.src;
+        if (item.type === 'video') {
+          media.controls = true;
+        }
+      }
+
+      container.appendChild(media);
+
+      const detailLink = document.getElementById('detailLink');
+      if (item.link && item.link.trim()) {
+        detailLink.href = item.link;
+        detailLink.style.display = 'block';
+      } else {
+        detailLink.style.display = 'none';
+      }
+
+      document.getElementById('detail').style.display = 'flex';
+    }
+
+    // Menu toggle
+    function toggleMenu() { document.getElementById('menu').classList.toggle('active'); }
+
+    // Initialize
+    window.addEventListener('load', () => {
+      if (localStorage.getItem('admin')) {
+        logoutBtn.style.display = "block";
+        uploadBtn.style.display = "block";
+      }
+      renderWithDots();
+    });
+    function checkStoreLink() {
+      const cat = document.getElementById("uploadCategory").value;
+      document.getElementById("storeLinkContainer").style.display = (cat === 'store') ? 'block' : 'none';
+    }
+    function closeDetail() {
+      const detail = document.getElementById('detail');
+      detail.style.display = 'none';
+
+      // optional: stop video / iframe
+      const media = document.getElementById('detailMediaContainer');
+      media.innerHTML = '';
+    }
+    function openUploadPopup() {
+      document.getElementById("uploadPopup").style.display = "block";
+      document.getElementById("uploadTitlePopup").innerText = editIndex !== null ? "Edit Konten" : "Upload Konten";
+      checkStoreLink();
+    }
+
+    function closeUploadPopup() {
+      document.getElementById("uploadPopup").style.display = "none";
+
+      // reset form
+      document.getElementById("uploadTitle").value = '';
+      document.getElementById("uploadDesc").value = '';
+      document.getElementById("uploadAuthor").value = '';
+      document.getElementById("uploadLink").value = '';
+      document.getElementById("uploadSrc").value = '';
+      document.getElementById("uploadPreview").innerHTML = 'Media akan muncul di sini';
+      document.getElementById("uploadCategory").disabled = false;
+
+      editIndex = null;
+      editCategory = null;
+    }
+
+  </script>
+
+
+</body>
+
+</html>
